@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class ValueChangeDown : MonoBehaviour
 {
     [SerializeField] private Slider _healthbar;
-    [SerializeField] private float _loopTime;
+    [SerializeField] private float _animationSpeed;
     [SerializeField] private Player _player;
 
     private float _value = 0;
@@ -35,24 +35,37 @@ public class ValueChangeDown : MonoBehaviour
     }
     
     private IEnumerator MoveSlider()
-    {         
-        while (Mathf.Abs(_value) > _epsilon)
+    {
+        float speedBySecond = _value / _animationSpeed;
+        float speedByUpdate = speedBySecond * Time.deltaTime;
+
+        float frameCount = _value / speedByUpdate;
+
+        for (int frame = 0; frame < frameCount; frame++)
         {
-            float speedBySecond = _value / _loopTime;
-            float speedByUpdate = Mathf.Round(speedBySecond * Time.deltaTime * 1000)/1000;
-
-            if (speedByUpdate > 0)
-            {
-                _value = Mathf.Clamp(_value - speedByUpdate, 0, _value);
-            }
-            else
-            {
-                _value = Mathf.Clamp(_value - speedByUpdate, _value, 0);
-            }
-
             _healthbar.value = Mathf.Clamp(_healthbar.value + speedByUpdate, _healthbar.minValue, _healthbar.maxValue);
-
             yield return new WaitForFixedUpdate();
         }
+
+        //while (Mathf.Abs(_value) > _epsilon)
+        //{
+        //    float speedBySecond = _value / _animationSpeed;
+        //    float speedByUpdate = Mathf.Round(speedBySecond * Time.deltaTime * 1000)/1000;
+
+        //    //_value = Mathf.Clamp(_value - speedByUpdate, 0, 0);
+
+        //    if (speedByUpdate > 0)
+        //    {
+        //        _value = Mathf.Clamp(_value - speedByUpdate, 0, _value);
+        //    }
+        //    else
+        //    {
+        //        _value = Mathf.Clamp(_value - speedByUpdate, _value, 0);
+        //    }
+
+        //    _healthbar.value = Mathf.Clamp(_healthbar.value + speedByUpdate, _healthbar.minValue, _healthbar.maxValue);
+
+        //    yield return new WaitForFixedUpdate();
+        //}
     }
 }
